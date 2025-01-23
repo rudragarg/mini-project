@@ -95,7 +95,7 @@ def main():
     st.title("Alternative Train and Test Sets - VIX")
 
     # Load data from local file
-    file_path = "data.csv"  # Specify the correct path to your CSV file
+    file_path = "data.csv"
     data = load_data(file_path)
 
     min_date, max_date = (
