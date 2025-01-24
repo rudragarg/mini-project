@@ -175,12 +175,8 @@ def find_optimal_vix(
         set_a, _ = divide_data(processed_data, months_per_set)
 
         returns_results[vix_threshold] = get_cumulative_returns(set_a)[
-            "Portfolio Overnight Return"
+            "Strategy Overnight Cumulative Return"
         ][-1]
-        sharpe = get_stats(set_a)["Sharpe Ratio Strategy"]
-        if sharpe == np.nan:
-            sharpe = 0
-        # sharpe
         sharpe_results[vix_threshold] = get_stats(set_a)["Sharpe Ratio Strategy"]
     best_vix_returns = max(returns_results, key=returns_results.get)
     best_vix_sharpe = max(sharpe_results, key=sharpe_results.get)
@@ -241,13 +237,23 @@ def main():
         value=1,
     )
 
-    st.write("Tuning Options:")
-    # Input fields for VIX values to try
-    vix_start = st.number_input("Start VIX Value", value=5.0, step=1.0)
-    vix_end = st.number_input("End VIX Value", value=40.0, step=1.0)
+    st.write(
+        "Tuning Options (Tries all Values between Start and End VIX Values with Step of 1):"
+    )
+    if vix_type == "Fixed":
+        # Input fields for VIX values to try
+        vix_start = st.number_input(
+            "Start VIX Value", min_value=0.0, value=5.0, step=1.0
+        )
+        vix_end = st.number_input("End VIX Value", min_value=0.0, value=40.0, step=1.0)
+    else:
+        vix_start = st.number_input(
+            "Start VIX Value", min_value=-100.0, value=-2.0, step=0.1
+        )
+        vix_end = st.number_input("End VIX Value", value=2.0, step=0.1)
 
     if vix_start >= vix_end:
-        st.sidebar.error("End VIX Value must be greater than Start VIX Value.")
+        st.error("End VIX Value must be greater than Start VIX Value.")
 
     if st.button("Optimize VIX Threshold for Set A"):
         optimal_vix_return, max_return, optimal_vix_sharpe, max_sharpe = (
