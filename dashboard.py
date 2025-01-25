@@ -5,6 +5,15 @@ import numpy as np
 
 def load_data(file_path):
     data = pd.read_csv(file_path, parse_dates=["VIX Time"], index_col="VIX Time")
+    # drop VIX %Chg, Volume, QQQ %Chg, and QQQ Overnight %Chg
+    data = data.drop(
+        columns=[
+            "VIX %Chg",
+            "Volume",
+            "QQQ %Chg",
+            "QQQ Overnight %Chg",
+        ]
+    )
     return data
 
 
