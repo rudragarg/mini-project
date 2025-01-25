@@ -59,8 +59,9 @@ def get_stats(data):
     avg_return_in_market = data["Strategy Overnight Return"].replace(0, np.nan).mean()
 
     # Percent of days long and market up
-    data["Market Up"] = np.where(data["QQQ Overnight Return"] > 0, 1, 0)
-    percent_long_up = (data["Position"] * data["Market Up"]).mean()
+    percent_long_up = (
+        (data["Position"].shift(1) == 1) & (data["QQQ Overnight Return"] > 0)
+    ).mean()
 
     # Overall cumulative return
     data["Strategy Overnight Cumulative Return"] = (
@@ -182,7 +183,7 @@ def find_optimal_vix(
         returns_results[vix_threshold] = get_cumulative_returns(set_a)[
             "Strategy Overnight Cumulative Return"
         ][-1]
-        sharpe_results[vix_threshold] = get_stats(set_a)["Sharpe Ratio Strategy"]
+        sharpe_results[vix_threshold] = get_stats(set_a)["Strategy Sharpe Ratio"]
     best_vix_returns = max(returns_results, key=returns_results.get)
     best_vix_sharpe = max(sharpe_results, key=sharpe_results.get)
 
